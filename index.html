@@ -3,85 +3,274 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Happy Friendship Day!</title>
+  <title>Stationery Hub - Practice Store</title>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-    .card {
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-      max-width: 500px;
-      width: 100%;
-      padding: 40px 30px;
-      text-align: center;
-      position: relative;
-      border: 4px solid #ff6b81;
-    }
-    .card h1 {
-      color: #ff4757;
-      font-size: 2.2rem;
-      margin-bottom: 15px;
-    }
-    .card p {
-      color: #57606f;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      margin-bottom: 25px;
-    }
-    .card img {
-      width: 100%;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-    }
-    .badge {
-      display: inline-block;
-      background-color: #ff6b81;
-      color: white;
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      font-size: 0.9rem;
-    }
-    .footer {
-      margin-top: 20px;
-      font-size: 0.9rem;
-      color: #a4b0be;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #f4f6f9; color: #333; padding-bottom: 50px; }
+
+    /* Navigation Bar */
+    header { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; sticky: top; }
+    header h1 { font-size: 1.5rem; }
+    nav button { background: #34495e; color: white; border: none; padding: 8px 15px; margin-left: 5px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
+    nav button:hover { background: #1abc9c; }
+    nav button.active { background: #1abc9c; font-weight: bold; }
+
+    .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+
+    /* Sections */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* Product Grid */
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .product-card { background: white; border-radius: 10px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); text-align: center; display: flex; flex-direction: column; justify-content: space-between; }
+    .product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
+    .product-card h3 { font-size: 1.1rem; margin: 10px 0 5px; }
+    .product-card .price { color: #27ae60; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
+    .btn { background: #27ae60; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
+    .btn:hover { background: #219150; }
+
+    /* Card Box Styles for Cart, Orders, Profile */
+    .box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+
+    /* Forms */
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+    .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+
+    /* Table Styles */
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+    th { background: #f8f9fa; }
+
+    .badge { background: #e74c3c; color: white; padding: 2px 7px; border-radius: 10px; font-size: 0.8rem; }
+    .empty-msg { color: #7f8c8d; font-style: italic; }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <div class="badge">🎉 SPECIAL WISHES</div>
-    <h1 style="margin-top:15px;">Happy Friendship Day! 🤝✨</h1>
-    
-    <!-- Image rendered from generated artifact -->
-    <img src="https://storage.googleapis.com/generative-ai-images/watermarked_img_11494118588101469178.png" alt="Friendship Day Postcard">
+  <header>
+    <h1>✏️ Stationery Hub</h1>
+    <nav>
+      <button onclick="showSection('products')" id="nav-products" class="active">Products</button>
+      <button onclick="showSection('cart')" id="nav-cart">Cart <span id="cart-count" class="badge">0</span></button>
+      <button onclick="showSection('orders')" id="nav-orders">Orders</button>
+      <button onclick="showSection('profile')" id="nav-profile">My Details</button>
+    </nav>
+  </header>
 
-    <p>
-      "A true friend is like a four-leaf clover: hard to find and lucky to have."<br><br>
-      Thank you for being an amazing friend! Wishing you endless laughs and memorable adventures!
-    </p>
+  <div class="container">
 
-    <div class="footer">
-      Deployed with ❤️ via <b>Cloud Run CI/CD Pipeline</b>
-    </div>
+    <!-- 1. PRODUCTS SECTION -->
+    <section id="products" class="section active">
+      <h2 style="margin-bottom: 20px;">Featured Stationery Items</h2>
+      <div class="product-grid" id="product-list"></div>
+    </section>
+
+    <!-- 2. CART SECTION -->
+    <section id="cart" class="section">
+      <div class="box">
+        <h2>Your Shopping Cart</h2>
+        <div id="cart-content"></div>
+      </div>
+    </section>
+
+    <!-- 3. ORDERS SECTION -->
+    <section id="orders" class="section">
+      <div class="box">
+        <h2>Your Placed Orders</h2>
+        <div id="orders-content"></div>
+      </div>
+    </section>
+
+    <!-- 4. MY DETAILS / LOGIN SECTION -->
+    <section id="profile" class="section">
+      <div class="box" style="max-width: 450px; margin: 0 auto;">
+        <h2>User Details / Login</h2>
+        <br>
+        <div class="form-group">
+          <label for="username">Name or Nickname:</label>
+          <input type="text" id="username" placeholder="e.g. Alex Smith">
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number:</label>
+          <input type="tel" id="phone" placeholder="e.g. +1 234 567 8900">
+        </div>
+        <button class="btn" onclick="saveProfile()">Save Details</button>
+        <p id="profile-status" style="margin-top: 10px; color: #27ae60; font-weight: bold;"></p>
+      </div>
+    </section>
+
   </div>
 
+  <script>
+    // 10 Practice Stationery Products
+    const products = [
+      { id: 1, name: "A5 Hardcover Journal", price: 12.99, img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" },
+      { id: 2, name: "Gel Ink Pen Set (10 Pack)", price: 8.50, img: "https://images.unsplash.com/photo-1585336261026-6757c54e3ed7?w=300" },
+      { id: 3, name: "Pastel Highlighters (6 Pcs)", price: 6.99, img: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=300" },
+      { id: 4, name: "Sticky Notes Multi-Color", price: 3.49, img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=300" },
+      { id: 5, name: "Aesthetic Pencil Case", price: 7.99, img: "https://images.unsplash.com/photo-1568805610918-f36c13616328?w=300" },
+      { id: 6, name: "Minimalist Desk Organizer", price: 15.20, img: "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=300" },
+      { id: 7, name: "Decorative Washi Tape Set", price: 5.99, img: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?w=300" },
+      { id: 8, name: "Stainless Steel Scissors", price: 4.50, img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300" },
+      { id: 9, name: "Wooden Ruler (30cm)", price: 2.00, img: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=300" },
+      { id: 10, name: "Graph Paper Spiral Pad", price: 5.50, img: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=300" }
+    ];
+
+    let cart = [];
+    let orders = [];
+
+    // Initialize App
+    window.onload = () => {
+      renderProducts();
+      loadProfile();
+    };
+
+    // Navigation Switcher
+    function showSection(sectionId) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(sectionId).classList.add('active');
+      document.getElementById('nav-' + sectionId).classList.add('active');
+
+      if (sectionId === 'cart') renderCart();
+      if (sectionId === 'orders') renderOrders();
+    }
+
+    // Render Products Grid
+    function renderProducts() {
+      const container = document.getElementById('product-list');
+      container.innerHTML = products.map(p => `
+        <div class="product-card">
+          <img src="${p.img}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <div class="price">$${p.price.toFixed(2)}</div>
+          <button class="btn" onclick="addToCart(${p.id})">Add to Cart</button>
+        </div>
+      `).join('');
+    }
+
+    // Add Item to Cart
+    function addToCart(productId) {
+      const existing = cart.find(item => item.id === productId);
+      if (existing) {
+        existing.qty++;
+      } else {
+        const prod = products.find(p => p.id === productId);
+        cart.push({ ...prod, qty: 1 });
+      }
+      updateCartBadge();
+      alert('Item added to cart!');
+    }
+
+    function updateCartBadge() {
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById('cart-count').innerText = totalQty;
+    }
+
+    // Render Cart
+    function renderCart() {
+      const cartContainer = document.getElementById('cart-content');
+      if (cart.length === 0) {
+        cartContainer.innerHTML = '<p class="empty-msg">Your cart is currently empty.</p>';
+        return;
+      }
+
+      let total = 0;
+      let rows = cart.map(item => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+        return `
+          <tr>
+            <td>${item.name}</td>
+            <td>$${item.price.toFixed(2)}</td>
+            <td>${item.qty}</td>
+            <td>$${itemTotal.toFixed(2)}</td>
+          </tr>
+        `;
+      }).join('');
+
+      cartContainer.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Item</th><th>Price</th><th>Qty</th><th>Total</th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        <h3 style="margin-top: 20px; text-align: right;">Total Amount: $${total.toFixed(2)}</h3>
+        <button class="btn" style="margin-top: 15px;" onclick="placeOrder()">Place Order</button>
+      `;
+    }
+
+    // Place Order (No Payment Required)
+    function placeOrder() {
+      const name = localStorage.getItem('user_name') || 'Guest';
+      const phone = localStorage.getItem('user_phone') || 'Not provided';
+
+      if (cart.length === 0) return;
+
+      const newOrder = {
+        id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+        date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
+        items: [...cart],
+        total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0),
+        customer: { name, phone }
+      };
+
+      orders.push(newOrder);
+      cart = [];
+      updateCartBadge();
+      showSection('orders');
+    }
+
+    // Render Orders
+    function renderOrders() {
+      const container = document.getElementById('orders-content');
+      if (orders.length === 0) {
+        container.innerHTML = '<p class="empty-msg">No orders placed yet.</p>';
+        return;
+      }
+
+      container.innerHTML = orders.map(ord => `
+        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+          <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px;">
+            <span>Order ID: ${ord.id}</span>
+            <span>Date: ${ord.date}</span>
+          </div>
+          <p style="font-size: 0.9rem; color: #555; margin-bottom: 8px;">
+            <strong>Customer:</strong> ${ord.customer.name} (${ord.customer.phone})
+          </p>
+          <ul style="margin-left: 20px; font-size: 0.95rem;">
+            ${ord.items.map(i => `<li>${i.name} x${i.qty} - $${(i.price * i.qty).toFixed(2)}</li>`).join('')}
+          </ul>
+          <div style="text-align: right; font-weight: bold; margin-top: 8px; color: #27ae60;">
+            Total: $${ord.total.toFixed(2)}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Profile Details
+    function saveProfile() {
+      const name = document.getElementById('username').value;
+      const phone = document.getElementById('phone').value;
+
+      localStorage.setItem('user_name', name);
+      localStorage.setItem('user_phone', phone);
+
+      document.getElementById('profile-status').innerText = 'Details saved successfully!';
+      setTimeout(() => { document.getElementById('profile-status').innerText = ''; }, 3000);
+    }
+
+    function loadProfile() {
+      const savedName = localStorage.getItem('user_name');
+      const savedPhone = localStorage.getItem('user_phone');
+
+      if (savedName) document.getElementById('username').value = savedName;
+      if (savedPhone) document.getElementById('phone').value = savedPhone;
+    }
+  </script>
 </body>
 </html>
