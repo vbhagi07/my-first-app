@@ -29,6 +29,8 @@
     .product-card .price { color: #27ae60; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
     .btn { background: #27ae60; color: white; border: none; padding: 10px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
     .btn:hover { background: #219150; }
+    .btn-danger { background: #e74c3c; margin-top: 10px; }
+    .btn-danger:hover { background: #c0392b; }
 
     /* Card Box Styles */
     .box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
@@ -36,7 +38,7 @@
     /* Forms */
     .form-group { margin-bottom: 15px; text-align: left; }
     .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-    .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
 
     /* Table Styles */
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -48,17 +50,20 @@
     
     /* Discount Callout Banner */
     .discount-banner { background: #e8f8f5; border: 1px solid #1abc9c; color: #16a085; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem; text-align: center; }
+    
+    /* Owner Info Bar */
+    .role-indicator { background: #f39c12; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: bold; margin-left: 10px; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>✏️ Stationery Hub</h1>
+    <h1>✏️ Stationery Hub <span id="role-badge" class="role-indicator" style="display:none;"></span></h1>
     <nav>
       <button onclick="showSection('products')" id="nav-products" class="active">Products</button>
       <button onclick="showSection('cart')" id="nav-cart">Cart <span id="cart-count" class="badge">0</span></button>
-      <button onclick="showSection('orders')" id="nav-orders">Orders</button>
-      <button onclick="showSection('profile')" id="nav-profile">My Details</button>
+      <button onclick="showSection('orders')" id="nav-orders" style="display: none;">Manage Orders 🔒</button>
+      <button onclick="showSection('profile')" id="nav-profile">Login / Profile</button>
     </nav>
   </header>
 
@@ -83,10 +88,11 @@
       </div>
     </section>
 
-    <!-- 3. ORDERS SECTION -->
+    <!-- 3. OWNER ORDERS SECTION (Restricted to Owner) -->
     <section id="orders" class="section">
       <div class="box">
-        <h2>Your Placed Orders</h2>
+        <h2>👑 Owner Dashboard - All Customer Orders</h2>
+        <p style="color:#7f8c8d; font-size:0.9rem; margin-bottom:15px;">Review incoming customer orders and shipping details.</p>
         <div id="orders-content"></div>
       </div>
     </section>
@@ -94,17 +100,36 @@
     <!-- 4. MY DETAILS / LOGIN SECTION -->
     <section id="profile" class="section">
       <div class="box" style="max-width: 450px; margin: 0 auto;">
-        <h2>User Details / Login</h2>
-        <p style="color:#7f8c8d; font-size:0.9rem; margin-top:5px; margin-bottom:15px;">Please enter your details before shopping.</p>
+        <h2>User Account / Portal</h2>
+        <p style="color:#7f8c8d; font-size:0.9rem; margin-top:5px; margin-bottom:15px;">Select your role to continue.</p>
+        
+        <div class="form-group">
+          <label for="user-role">I am a:</label>
+          <select id="user-role" onchange="toggleOwnerField()">
+            <option value="customer">Customer (Shopper)</option>
+            <option value="owner">Store Owner (Admin)</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label for="username">Name or Nickname:</label>
           <input type="text" id="username" placeholder="e.g. Alex Smith">
         </div>
+
         <div class="form-group">
           <label for="phone">Phone Number:</label>
           <input type="tel" id="phone" placeholder="e.g. +1 234 567 8900">
         </div>
-        <button class="btn" onclick="saveProfile()">Save Details & Continue</button>
+
+        <!-- Owner Passkey Field -->
+        <div class="form-group" id="owner-passkey-group" style="display: none;">
+          <label for="owner-passkey">Owner Secret Passkey:</label>
+          <input type="password" id="owner-passkey" placeholder="Enter owner key (Default: admin123)">
+        </div>
+
+        <button class="btn" onclick="saveProfile()">Save Details & Login</button>
+        <button class="btn btn-danger" id="logout-btn" onclick="logout()" style="display:none;">Logout</button>
+        
         <p id="profile-status" style="margin-top: 10px; color: #27ae60; font-weight: bold;"></p>
       </div>
     </section>
@@ -112,7 +137,6 @@
   </div>
 
   <script>
-    // 10 Practice Stationery Products with reliable image fallback handlers
     const products = [
       { id: 1, name: "A5 Hardcover Journal", price: 12.99, img: "https://picsum.photos/id/24/300/200" },
       { id: 2, name: "Gel Ink Pen Set (10 Pack)", price: 8.50, img: "https://picsum.photos/id/1059/300/200" },
@@ -127,12 +151,18 @@
     ];
 
     let cart = [];
-    let orders = [];
+    // Load existing stored orders from localStorage so they persist across refreshes!
+    let orders = JSON.parse(localStorage.getItem('store_orders') || '[]');
 
     window.onload = () => {
       renderProducts();
       loadProfile();
     };
+
+    function toggleOwnerField() {
+      const role = document.getElementById('user-role').value;
+      document.getElementById('owner-passkey-group').style.display = (role === 'owner') ? 'block' : 'none';
+    }
 
     function showSection(sectionId) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
@@ -157,7 +187,6 @@
       `).join('');
     }
 
-    // Require Login Check Before Adding To Cart
     function addToCart(productId) {
       const savedName = localStorage.getItem('user_name');
       const savedPhone = localStorage.getItem('user_phone');
@@ -184,7 +213,6 @@
       document.getElementById('cart-count').innerText = totalQty;
     }
 
-    // Calculate Discount Percent based on rules
     function getDiscountPercent(subtotal) {
       if (subtotal >= 100) return 30;
       if (subtotal >= 50) return 20;
@@ -273,16 +301,25 @@
       };
 
       orders.push(newOrder);
+      localStorage.setItem('store_orders', JSON.stringify(orders)); // Persist orders locally
+
       cart = [];
       updateCartBadge();
-      alert('Order placed successfully! Thank you!');
-      showSection('orders');
+      alert('🎉 Order placed successfully! The store owner will review your delivery details.');
+      showSection('products');
     }
 
     function renderOrders() {
       const container = document.getElementById('orders-content');
+      const userRole = localStorage.getItem('user_role');
+
+      if (userRole !== 'owner') {
+        container.innerHTML = '<p style="color: #e74c3c; font-weight: bold;">Access Denied. Only the Store Owner can view orders.</p>';
+        return;
+      }
+
       if (orders.length === 0) {
-        container.innerHTML = '<p class="empty-msg">No orders placed yet.</p>';
+        container.innerHTML = '<p class="empty-msg">No customer orders placed yet.</p>';
         return;
       }
 
@@ -311,30 +348,79 @@
     }
 
     function saveProfile() {
+      const role = document.getElementById('user-role').value;
       const name = document.getElementById('username').value.trim();
       const phone = document.getElementById('phone').value.trim();
+      const passkey = document.getElementById('owner-passkey').value.trim();
 
       if (!name || !phone) {
         alert('Please fill out both Name and Phone Number.');
         return;
       }
 
+      // Check Owner Passkey
+      if (role === 'owner') {
+        if (passkey !== 'admin123') {
+          alert('Incorrect Owner Passkey! (Hint: use admin123)');
+          return;
+        }
+      }
+
+      localStorage.setItem('user_role', role);
       localStorage.setItem('user_name', name);
       localStorage.setItem('user_phone', phone);
 
-      document.getElementById('profile-status').innerText = 'Details saved successfully!';
+      applyRoleUI(role);
+
+      document.getElementById('profile-status').innerText = `Logged in as ${role === 'owner' ? 'Store Owner' : 'Customer'}!`;
       setTimeout(() => { 
         document.getElementById('profile-status').innerText = ''; 
-        showSection('products');
-      }, 1200);
+        showSection(role === 'owner' ? 'orders' : 'products');
+      }, 1000);
     }
 
     function loadProfile() {
+      const savedRole = localStorage.getItem('user_role') || 'customer';
       const savedName = localStorage.getItem('user_name');
       const savedPhone = localStorage.getItem('user_phone');
 
+      document.getElementById('user-role').value = savedRole;
       if (savedName) document.getElementById('username').value = savedName;
       if (savedPhone) document.getElementById('phone').value = savedPhone;
+
+      toggleOwnerField();
+      applyRoleUI(savedRole);
+    }
+
+    function applyRoleUI(role) {
+      const roleBadge = document.getElementById('role-badge');
+      const ordersNav = document.getElementById('nav-orders');
+      const logoutBtn = document.getElementById('logout-btn');
+
+      if (localStorage.getItem('user_name')) {
+        logoutBtn.style.display = 'block';
+      }
+
+      if (role === 'owner') {
+        roleBadge.style.display = 'inline-block';
+        roleBadge.innerText = 'OWNER';
+        ordersNav.style.display = 'inline-block';
+      } else {
+        roleBadge.style.display = 'none';
+        ordersNav.style.display = 'none';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('user_role');
+      localStorage.removeItem('user_name');
+      localStorage.removeItem('user_phone');
+      document.getElementById('username').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('owner-passkey').value = '';
+      applyRoleUI('customer');
+      alert('Logged out successfully.');
+      showSection('products');
     }
   </script>
 </body>
