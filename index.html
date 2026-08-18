@@ -9,7 +9,7 @@
     body { background-color: #f4f6f9; color: #333; padding-bottom: 50px; }
 
     /* Navigation Bar */
-    header { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; sticky: top; }
+    header { background: #2c3e50; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
     header h1 { font-size: 1.5rem; }
     nav button { background: #34495e; color: white; border: none; padding: 8px 15px; margin-left: 5px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; }
     nav button:hover { background: #1abc9c; }
@@ -27,16 +27,16 @@
     .product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
     .product-card h3 { font-size: 1.1rem; margin: 10px 0 5px; }
     .product-card .price { color: #27ae60; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; }
-    .btn { background: #27ae60; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
+    .btn { background: #27ae60; color: white; border: none; padding: 10px 12px; border-radius: 5px; cursor: pointer; font-weight: bold; width: 100%; }
     .btn:hover { background: #219150; }
 
-    /* Card Box Styles for Cart, Orders, Profile */
+    /* Card Box Styles */
     .box { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
     /* Forms */
     .form-group { margin-bottom: 15px; text-align: left; }
     .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-    .form-group input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
 
     /* Table Styles */
     table { width: 100%; border-collapse: collapse; margin-top: 15px; }
@@ -45,6 +45,9 @@
 
     .badge { background: #e74c3c; color: white; padding: 2px 7px; border-radius: 10px; font-size: 0.8rem; }
     .empty-msg { color: #7f8c8d; font-style: italic; }
+    
+    /* Discount Callout Banner */
+    .discount-banner { background: #e8f8f5; border: 1px solid #1abc9c; color: #16a085; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 0.95rem; text-align: center; }
   </style>
 </head>
 <body>
@@ -60,6 +63,11 @@
   </header>
 
   <div class="container">
+
+    <!-- Discount Tiers Info -->
+    <div class="discount-banner">
+      🎁 <b>Special Savings Tiers:</b> 5% off over $20 | 10% off over $35 | 20% off over $50 | 30% off over $100!
+    </div>
 
     <!-- 1. PRODUCTS SECTION -->
     <section id="products" class="section active">
@@ -87,7 +95,7 @@
     <section id="profile" class="section">
       <div class="box" style="max-width: 450px; margin: 0 auto;">
         <h2>User Details / Login</h2>
-        <br>
+        <p style="color:#7f8c8d; font-size:0.9rem; margin-top:5px; margin-bottom:15px;">Please enter your details before shopping.</p>
         <div class="form-group">
           <label for="username">Name or Nickname:</label>
           <input type="text" id="username" placeholder="e.g. Alex Smith">
@@ -96,7 +104,7 @@
           <label for="phone">Phone Number:</label>
           <input type="tel" id="phone" placeholder="e.g. +1 234 567 8900">
         </div>
-        <button class="btn" onclick="saveProfile()">Save Details</button>
+        <button class="btn" onclick="saveProfile()">Save Details & Continue</button>
         <p id="profile-status" style="margin-top: 10px; color: #27ae60; font-weight: bold;"></p>
       </div>
     </section>
@@ -104,30 +112,28 @@
   </div>
 
   <script>
-    // 10 Practice Stationery Products
+    // 10 Practice Stationery Products with reliable image fallback handlers
     const products = [
-      { id: 1, name: "A5 Hardcover Journal", price: 12.99, img: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=300" },
-      { id: 2, name: "Gel Ink Pen Set (10 Pack)", price: 8.50, img: "https://images.unsplash.com/photo-1585336261026-6757c54e3ed7?w=300" },
-      { id: 3, name: "Pastel Highlighters (6 Pcs)", price: 6.99, img: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=300" },
-      { id: 4, name: "Sticky Notes Multi-Color", price: 3.49, img: "https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=300" },
-      { id: 5, name: "Aesthetic Pencil Case", price: 7.99, img: "https://images.unsplash.com/photo-1568805610918-f36c13616328?w=300" },
-      { id: 6, name: "Minimalist Desk Organizer", price: 15.20, img: "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=300" },
-      { id: 7, name: "Decorative Washi Tape Set", price: 5.99, img: "https://images.unsplash.com/photo-1516962215378-7fa2e137ae93?w=300" },
-      { id: 8, name: "Stainless Steel Scissors", price: 4.50, img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300" },
-      { id: 9, name: "Wooden Ruler (30cm)", price: 2.00, img: "https://images.unsplash.com/photo-1588072432836-e10032774350?w=300" },
-      { id: 10, name: "Graph Paper Spiral Pad", price: 5.50, img: "https://images.unsplash.com/photo-1517842645767-c639042777db?w=300" }
+      { id: 1, name: "A5 Hardcover Journal", price: 12.99, img: "https://picsum.photos/id/24/300/200" },
+      { id: 2, name: "Gel Ink Pen Set (10 Pack)", price: 8.50, img: "https://picsum.photos/id/1059/300/200" },
+      { id: 3, name: "Pastel Highlighters (6 Pcs)", price: 6.99, img: "https://picsum.photos/id/367/300/200" },
+      { id: 4, name: "Sticky Notes Multi-Color", price: 3.49, img: "https://picsum.photos/id/445/300/200" },
+      { id: 5, name: "Aesthetic Pencil Case", price: 7.99, img: "https://picsum.photos/id/1062/300/200" },
+      { id: 6, name: "Minimalist Desk Organizer", price: 15.20, img: "https://picsum.photos/id/1069/300/200" },
+      { id: 7, name: "Decorative Washi Tape Set", price: 5.99, img: "https://picsum.photos/id/824/300/200" },
+      { id: 8, name: "Stainless Steel Scissors", price: 4.50, img: "https://picsum.photos/id/1060/300/200" },
+      { id: 9, name: "Wooden Ruler (30cm)", price: 2.00, img: "https://picsum.photos/id/357/300/200" },
+      { id: 10, name: "Graph Paper Spiral Pad", price: 5.50, img: "https://picsum.photos/id/1010/300/200" }
     ];
 
     let cart = [];
     let orders = [];
 
-    // Initialize App
     window.onload = () => {
       renderProducts();
       loadProfile();
     };
 
-    // Navigation Switcher
     function showSection(sectionId) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
       document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('active'));
@@ -139,12 +145,11 @@
       if (sectionId === 'orders') renderOrders();
     }
 
-    // Render Products Grid
     function renderProducts() {
       const container = document.getElementById('product-list');
       container.innerHTML = products.map(p => `
         <div class="product-card">
-          <img src="${p.img}" alt="${p.name}">
+          <img src="${p.img}" alt="${p.name}" onerror="this.onerror=null; this.src='https://placehold.co/300x140?text=Stationery+Item';">
           <h3>${p.name}</h3>
           <div class="price">$${p.price.toFixed(2)}</div>
           <button class="btn" onclick="addToCart(${p.id})">Add to Cart</button>
@@ -152,8 +157,17 @@
       `).join('');
     }
 
-    // Add Item to Cart
+    // Require Login Check Before Adding To Cart
     function addToCart(productId) {
+      const savedName = localStorage.getItem('user_name');
+      const savedPhone = localStorage.getItem('user_phone');
+
+      if (!savedName || !savedPhone) {
+        alert('Please log in with your Name and Phone Number first!');
+        showSection('profile');
+        return;
+      }
+
       const existing = cart.find(item => item.id === productId);
       if (existing) {
         existing.qty++;
@@ -170,7 +184,15 @@
       document.getElementById('cart-count').innerText = totalQty;
     }
 
-    // Render Cart
+    // Calculate Discount Percent based on rules
+    function getDiscountPercent(subtotal) {
+      if (subtotal >= 100) return 30;
+      if (subtotal >= 50) return 20;
+      if (subtotal >= 35) return 10;
+      if (subtotal >= 20) return 5;
+      return 0;
+    }
+
     function renderCart() {
       const cartContainer = document.getElementById('cart-content');
       if (cart.length === 0) {
@@ -178,10 +200,10 @@
         return;
       }
 
-      let total = 0;
+      let subtotal = 0;
       let rows = cart.map(item => {
         const itemTotal = item.price * item.qty;
-        total += itemTotal;
+        subtotal += itemTotal;
         return `
           <tr>
             <td>${item.name}</td>
@@ -192,6 +214,10 @@
         `;
       }).join('');
 
+      const discountPercent = getDiscountPercent(subtotal);
+      const discountAmount = (subtotal * discountPercent) / 100;
+      const finalTotal = subtotal - discountAmount;
+
       cartContainer.innerHTML = `
         <table>
           <thead>
@@ -199,33 +225,60 @@
           </thead>
           <tbody>${rows}</tbody>
         </table>
-        <h3 style="margin-top: 20px; text-align: right;">Total Amount: $${total.toFixed(2)}</h3>
-        <button class="btn" style="margin-top: 15px;" onclick="placeOrder()">Place Order</button>
+        
+        <div style="margin-top: 20px; text-align: right; line-height: 1.8;">
+          <p>Subtotal: <b>$${subtotal.toFixed(2)}</b></p>
+          ${discountPercent > 0 
+            ? `<p style="color: #27ae60;">Discount (${discountPercent}% OFF): <b>-$${discountAmount.toFixed(2)}</b></p>` 
+            : `<p style="color: #7f8c8d; font-size:0.9rem;">Add $${(20 - subtotal).toFixed(2)} more to unlock 5% discount!</p>`
+          }
+          <h3 style="font-size: 1.3rem; color: #2c3e50;">Final Total: $${finalTotal.toFixed(2)}</h3>
+        </div>
+
+        <div class="form-group" style="margin-top:20px;">
+          <label for="address">Delivery Address:</label>
+          <textarea id="address" rows="3" placeholder="Enter your full home address for delivery..."></textarea>
+        </div>
+
+        <button class="btn" style="margin-top: 10px;" onclick="placeOrder()">Place Order</button>
       `;
     }
 
-    // Place Order (No Payment Required)
     function placeOrder() {
-      const name = localStorage.getItem('user_name') || 'Guest';
-      const phone = localStorage.getItem('user_phone') || 'Not provided';
+      const name = localStorage.getItem('user_name');
+      const phone = localStorage.getItem('user_phone');
+      const address = document.getElementById('address') ? document.getElementById('address').value.trim() : '';
+
+      if (!address) {
+        alert('Please enter your home address for delivery before placing the order.');
+        return;
+      }
 
       if (cart.length === 0) return;
+
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+      const discountPercent = getDiscountPercent(subtotal);
+      const discountAmount = (subtotal * discountPercent) / 100;
+      const finalTotal = subtotal - discountAmount;
 
       const newOrder = {
         id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
         date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString(),
         items: [...cart],
-        total: cart.reduce((sum, item) => sum + (item.price * item.qty), 0),
-        customer: { name, phone }
+        subtotal: subtotal,
+        discountPercent: discountPercent,
+        discountAmount: discountAmount,
+        total: finalTotal,
+        customer: { name, phone, address }
       };
 
       orders.push(newOrder);
       cart = [];
       updateCartBadge();
+      alert('Order placed successfully! Thank you!');
       showSection('orders');
     }
 
-    // Render Orders
     function renderOrders() {
       const container = document.getElementById('orders-content');
       if (orders.length === 0) {
@@ -234,34 +287,46 @@
       }
 
       container.innerHTML = orders.map(ord => `
-        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+        <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; margin-bottom: 15px; background: #fafafa;">
           <div style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 8px;">
             <span>Order ID: ${ord.id}</span>
             <span>Date: ${ord.date}</span>
           </div>
-          <p style="font-size: 0.9rem; color: #555; margin-bottom: 8px;">
+          <p style="font-size: 0.9rem; color: #555; margin-bottom: 4px;">
             <strong>Customer:</strong> ${ord.customer.name} (${ord.customer.phone})
           </p>
-          <ul style="margin-left: 20px; font-size: 0.95rem;">
+          <p style="font-size: 0.9rem; color: #555; margin-bottom: 10px;">
+            <strong>Delivery Address:</strong> ${ord.customer.address}
+          </p>
+          <ul style="margin-left: 20px; font-size: 0.95rem; margin-bottom: 10px;">
             ${ord.items.map(i => `<li>${i.name} x${i.qty} - $${(i.price * i.qty).toFixed(2)}</li>`).join('')}
           </ul>
-          <div style="text-align: right; font-weight: bold; margin-top: 8px; color: #27ae60;">
-            Total: $${ord.total.toFixed(2)}
+          <div style="text-align: right; font-size:0.95rem; line-height: 1.5; border-top: 1px solid #eee; padding-top: 8px;">
+            <span>Subtotal: $${ord.subtotal.toFixed(2)}</span><br>
+            ${ord.discountAmount > 0 ? `<span style="color:#27ae60;">Discount (${ord.discountPercent}%): -$${ord.discountAmount.toFixed(2)}</span><br>` : ''}
+            <strong style="color: #27ae60; font-size: 1.1rem;">Paid Total: $${ord.total.toFixed(2)}</strong>
           </div>
         </div>
       `).join('');
     }
 
-    // Profile Details
     function saveProfile() {
-      const name = document.getElementById('username').value;
-      const phone = document.getElementById('phone').value;
+      const name = document.getElementById('username').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+
+      if (!name || !phone) {
+        alert('Please fill out both Name and Phone Number.');
+        return;
+      }
 
       localStorage.setItem('user_name', name);
       localStorage.setItem('user_phone', phone);
 
       document.getElementById('profile-status').innerText = 'Details saved successfully!';
-      setTimeout(() => { document.getElementById('profile-status').innerText = ''; }, 3000);
+      setTimeout(() => { 
+        document.getElementById('profile-status').innerText = ''; 
+        showSection('products');
+      }, 1200);
     }
 
     function loadProfile() {
