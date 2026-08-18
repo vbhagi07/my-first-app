@@ -1,10 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My First Cloud Run App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Friendship Day!</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .card {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      max-width: 500px;
+      width: 100%;
+      padding: 40px 30px;
+      text-align: center;
+      position: relative;
+      border: 4px solid #ff6b81;
+    }
+    .card h1 {
+      color: #ff4757;
+      font-size: 2.2rem;
+      margin-bottom: 15px;
+    }
+    .card p {
+      color: #57606f;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 25px;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    .badge {
+      display: inline-block;
+      background-color: #ff6b81;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+      font-size: 0.9rem;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: #a4b0be;
+    }
+  </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; margin-top: 50px;">
-    <h1>Hello World from Google Cloud Run! 🚀</h1>
-    <p>My DevOps setup is officially working!</p>
+<body>
+
+  <div class="card">
+    <div class="badge">🎉 SPECIAL WISHES</div>
+    <h1 style="margin-top:15px;">Happy Friendship Day! 🤝✨</h1>
+    
+    <!-- Image rendered from generated artifact -->
+    <img src="https://storage.googleapis.com/generative-ai-images/watermarked_img_11494118588101469178.png" alt="Friendship Day Postcard">
+
+    <p>
+      "A true friend is like a four-leaf clover: hard to find and lucky to have."<br><br>
+      Thank you for being an amazing friend! Wishing you endless laughs and memorable adventures!
+    </p>
+
+    <div class="footer">
+      Deployed with ❤️ via <b>Cloud Run CI/CD Pipeline</b>
+    </div>
+  </div>
+
 </body>
 </html>
